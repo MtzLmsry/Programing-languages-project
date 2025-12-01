@@ -6,7 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Apartment extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'owner_id',
+        'city_id',
+        'governorate_id',
+        'title',
+        'price',
+        'rooms',
+        'floor_number',
+        'area',
+        'apartment_type',
+        'description',
+        'is_internet_available',
+        'is_air_conditioned',
+        'is_cleaning_available',
+        'is_electricity_available',
+        'is_furnished',
+        'status',
+        'reject_reason'
+
+    ];
 
     /*
     |----------------------|
@@ -65,12 +84,17 @@ class Apartment extends Model
         return $query->whereBetween('price', [$min, $max]);
     }
 
+    public function scopeFilterArea($query, $minArea, $maxArea)
+    {
+        return $query->whereBetween('area', [$minArea, $maxArea]);
+    }
+
     public function scopeFilterRooms($query, $rooms)
     {
         return $query->where('rooms', $rooms);
     }
 
-    public function scopeFilterFurnished($query, $furnished)
+    public function scopeFilteris_Furnished($query, $furnished)
     {
         return $query->where('is_furnished', $furnished);
     }
@@ -82,6 +106,8 @@ class Apartment extends Model
               ->orWhere('description', 'like', "%$search%");
         });
     }
+
+    
 
     
     /*
@@ -103,6 +129,11 @@ class Apartment extends Model
         if (isset($filters['min_price']) && isset($filters['max_price'])) {
             $query->filterPrice($filters['min_price'], $filters['max_price']);
         }
+
+        if(isset($filters['min_area']) && isset($filters['max_area'])){
+            $query->filterArea($filters['min_area'], $filters['max_area']);
+        }
+
 
         if (isset($filters['rooms'])) {
             $query->filterRooms($filters['rooms']);

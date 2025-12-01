@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ApartmentController extends Controller
 {
-    /**
-     *  GET /apartments  (with filters + pagination)
-     */
+    // GET /apartments (with filters)
     public function index(Request $request)
     {
         $filters = $request->only([
@@ -33,9 +31,7 @@ class ApartmentController extends Controller
         ]);
     }
 
-    /**
-     * POST /apartments  (create apartment)
-     */
+    // POST /apartments
     public function store(Request $request)
     {
         $request->validate([
@@ -43,6 +39,8 @@ class ApartmentController extends Controller
             'price' => 'required|numeric',
             'rooms' => 'required|integer',
             'floor_number' => 'required|integer',
+            'apartment_type' => 'required|in:one_room,multipul_rooms',
+            'area' => 'required|integer',
             'description' => 'required|string',
             'city_id' => 'required|exists:cities,id',
             'governorate_id' => 'required|exists:governorates,id',
@@ -51,7 +49,6 @@ class ApartmentController extends Controller
         ]);
 
         $owner_id = Auth::id();
-        
 
         $apartment = Apartment::create([
             'owner_id' => $owner_id,
@@ -61,6 +58,8 @@ class ApartmentController extends Controller
             'price' => $request->price,
             'rooms' => $request->rooms,
             'floor_number' => $request->floor_number,
+            'apartment_type' => $request->apartment_type,
+            'area' => $request->area,
             'description' => $request->description,
             'is_internet_available' => $request->is_internet_available ?? false,
             'is_air_conditioned' => $request->is_air_conditioned ?? false,
@@ -75,7 +74,7 @@ class ApartmentController extends Controller
 
             Apartment_photo::create([
                 'apartment_id' => $apartment->id,
-                'image_path' => $path
+                'photo_url' => $path
             ]);
         }
 
@@ -86,7 +85,7 @@ class ApartmentController extends Controller
         ]);
     }
 
-    
+    // GET /apartments/{id}
     public function show($id)
     {
         $apartment = Apartment::with('images')->find($id);
@@ -104,18 +103,13 @@ class ApartmentController extends Controller
         ]);
     }
 
-    /**
-     * PUT /apartments/{id}/approve
-     */
+    // PUT /apartments/{id}/approve
     public function approve($id)
     {
         $apartment = Apartment::find($id);
 
         if (!$apartment) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Apartment not found'
-            ], 404);
+            return response()->json(['status' => 'error', 'message' => 'Not found'], 404);
         }
 
         $apartment->update([
@@ -129,56 +123,95 @@ class ApartmentController extends Controller
         ]);
     }
 
-    /**
-     * PUT /apartments/{id}/reject
-     */
+    // PUT /apartments/{id}/reject
     public function reject(Request $request, $id)
     {
-        $request->validate(['reason' => 'required|string']);
+        $request->validate(['reject_reason' => 'required|string']);
 
         $apartment = Apartment::find($id);
 
         if (!$apartment) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Apartment not found'
-            ], 404);
+            return response()->json(['status' => 'error', 'message' => 'Not found'], 404);
         }
 
         $apartment->update([
             'status' => 'rejected',
-            'reject_reason' => $request->reason
+            'reject_reason' => $request->reject_reason
         ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Apartment Rejected'
+            'message' => 'Apartment rejected'
         ]);
     }
 
-    /**
-     * DELETE /apartments/{id}
-     */
+    // PUT /apartments/{id}
+    public function update(Request $request, $id)
+    {
+        $apartment = Apartment::find($id);
+        if (!$apartment) {
+            return response()->json(['status' => 'error', 'message' => 'Not found'], 404);
+        }
+
+        $request->validate([
+            'title' => 'sometimes|string',
+            'price' => 'sometimes|numeric',
+            'rooms' => 'sometimes|integer',
+            'floor_number' => 'sometimes|integer',
+            'area' => 'sometimes|integer',
+            'apartment_type' => 'sometimes|in:one_room,multipul_rooms',
+            'description' => 'sometimes|string',
+            'city_id' => 'sometimes|exists:cities,id',
+            'governorate_id' => 'sometimes|exists:governorates,id',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg'
+        ]);
+
+        $apartment->update($request->except('images'));
+
+        if ($request->hasFile('images')) {
+
+            foreach ($apartment->images as $img) {
+                Storage::disk('public')->delete($img->photo_url);
+                $img->delete();
+            }
+
+            foreach ($request->file('images') as $img) {
+                $path = $img->store('apartments', 'public');
+                Apartment_photo::create([
+                    'apartment_id' => $apartment->id,
+                    'photo_url' => $path
+                ]);
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $apartment,
+            'message' => 'Updated successfully'
+        ]);
+    }
+
+    // DELETE /apartments/{id}
     public function destroy($id)
     {
         $apartment = Apartment::find($id);
         if (!$apartment) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Apartment not found'
-            ], 404);
+                 'message' => 'Not found'],
+                  404);}
+
+        foreach ($apartment->images as $img) {
+            Storage::disk('public')->delete($img->photo_url);
+            $img->delete();
         }
-        // Delete associated images
-        foreach ($apartment->images as $image) {
-            Storage::disk('public')->delete($image->photo_url);
-            $image->delete();
-        }
-        // Delete the apartment
+
         $apartment->delete();
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Apartment deleted successfully'
+            'message' => 'Apartment deleted'
         ]);
     }
-
 }

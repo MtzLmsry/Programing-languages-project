@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Favorite extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'apartment_id'
+    ];
 }
