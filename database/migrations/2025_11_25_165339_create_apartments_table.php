@@ -20,6 +20,8 @@ return new class extends Migration
             $table->float("price");
             $table->integer("rooms")->default(1);
             $table->integer("floor_number");
+            $table->integer("area");
+            $table->enum("apartment_type", ['one_room','multipul_rooms'] )->default('one_room');
             $table->text("description");
             $table->boolean("is_internet_available")->default(false);
             $table->boolean("is_air_conditioned")->default(false);
