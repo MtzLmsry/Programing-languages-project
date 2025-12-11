@@ -16,7 +16,7 @@ class ApartmentController extends Controller
         return Apartment::all();
        
     }
-    
+
     public function search(Request $request)
     {
         $filters = $request->only([
@@ -31,7 +31,6 @@ class ApartmentController extends Controller
         ]);
     }
 
-    // POST /apartments
     public function store(Request $request)
     {
         $request->validate([
