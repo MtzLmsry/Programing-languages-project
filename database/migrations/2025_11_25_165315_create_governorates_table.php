@@ -16,18 +16,7 @@ return new class extends Migration
             $table->enum("name", [
                 "Damascus",
                 "Damascus countryside",
-                "Aleppo",
-                "Homs",
-                "Latakia",
-                "Tartus",
-                "Hama",
-                "Deir ez-Zor",
-                "Raqqa",
-                "Hasakah",
-                "Daraa",
-                "Quneitra",
-                "Idlib",
-            ])->default("Damascus");
+            ]);
             $table->timestamps();
         });
     }

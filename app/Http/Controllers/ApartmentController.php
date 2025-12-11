@@ -13,22 +13,8 @@ class ApartmentController extends Controller
     // GET /apartments (with filters)
     public function index(Request $request)
     {
-        $filters = $request->only([
-            'governorate_id',
-            'city_id',
-            'min_price',
-            'max_price',
-            'rooms',
-            'is_furnished',
-            'search'
-        ]);
-
-        $apartments = Apartment::filter($filters)->paginate(10);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $apartments
-        ]);
+        return Apartment::all();
+       
     }
 
     // POST /apartments
@@ -164,7 +150,7 @@ class ApartmentController extends Controller
             'city_id' => 'sometimes|exists:cities,id',
             'governorate_id' => 'sometimes|exists:governorates,id',
             'images' => 'sometimes|array',
-            'images.*' => 'image|mimes:jpeg,png,jpg'
+            'images.*' => 'image|mimes:jpeg,png,jpg,JPG'
         ]);
 
         $apartment->update($request->except('images'));
