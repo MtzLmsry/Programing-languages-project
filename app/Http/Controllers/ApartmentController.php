@@ -16,6 +16,20 @@ class ApartmentController extends Controller
         return Apartment::all();
        
     }
+    
+    public function search(Request $request)
+    {
+        $filters = $request->only([
+            'city_id', 'governorate_id', 'min_price', 'max_price',
+            'rooms', 'apartment_type', 'is_furnished'
+        ]);
+        $apartments = Apartment::filter($filters)->paginate(10);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $apartments
+        ]);
+    }
 
     // POST /apartments
     public function store(Request $request)

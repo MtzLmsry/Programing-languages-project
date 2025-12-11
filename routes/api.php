@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('/apartments/add', [ApartmentController::class, 'store'])->name("addApartment");      
 
     Route::post('/apartment/update/{id}', [ApartmentController::class, 'update'])->name("updateApartment");
+    Route::get('/apartment/search', [ApartmentController::class, 'search'])->name("searchApartment");
 
     Route::get('/apartment/show/{id}', [ApartmentController::class, 'show'])->name("showApartment");
     //*******************************************************************************************/
