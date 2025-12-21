@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Models\User;
@@ -10,31 +12,17 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(Request $request): JsonResponse {
-        $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'digits:10', 'unique:users'],
-            //'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
-            'role'=> ['required','string','in:admin,user'],
-            'birth_date' => ['required', 'date'],
-            'personal_photo' => ['required', 'image'],
-            'id_photo_front' => ['required', 'image'],
-            'id_photo_back' => ['required', 'image'],
-        ]);
-
+    public function register(RegisterRequest $request): JsonResponse {
+        
         $user = User::create([
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
+            'first_name' => $request['FirstName'],
+            'last_name' => $request['LastName'],
             'phone' => $request['phone'],
-            //'email' => $request['email'],
             'password' => bcrypt($request['password']),
-            'role' => $request['role'],
-            'birth_date' => $request['birth_date'],
-            'personal_photo' => $request->file('personal_photo')->store('user/personal', 'public'),
-            'id_photo_front' => $request->file('id_photo_front')->store('users/id', 'public'),
-            'id_photo_back' => $request->file('id_photo_back')->store('users/id', 'public'),
+            'birth_date' => $request['BirthDate'],
+            'personal_photo' => $request->file('personalPhoto')->store('user/personal', 'public'),
+            'id_photo_front' => $request->file('idPhotoFront')->store('users/id', 'public'),
+            'id_photo_back' => $request->file('idPhotoBack')->store('users/id', 'public'),
         ]);
 
         $token = $user->createToken('API_TOKEN')->plainTextToken;
@@ -50,13 +38,9 @@ class AuthController extends Controller
 
     }
 
-    public function login(Request $request): JsonResponse {
-        $request->validate([
-            'phone' => ['required', 'string', 'digits:10'],
-            'password' => ['required', 'string'],
-        ]);
-
-        $user = User::where('phone', $request->phone)->first();
+    public function login(LoginRequest $request): JsonResponse {
+        
+        
          if (!Auth::attempt($request->only('phone', 'password'))) {
             return response()->json([
                 'status' => 'error',

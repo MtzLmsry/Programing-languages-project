@@ -20,7 +20,7 @@ Route::controller(AuthController::class)->group(function () {
 
 // Apartments api routes will be here
 
-Route::controller(ApartmentController::class)->group(function (){
+Route::controller(ApartmentController::class)->middleware('auth:sanctum')->group(function (){
     Route::get('/apartments', 'index')->name('apartments.index');
     Route::get('/apartments/search', 'search')->name('apartments.search');
     Route::post('/apartments/create', 'store')->name('apartments.store');
@@ -29,7 +29,7 @@ Route::controller(ApartmentController::class)->group(function (){
     Route::delete('/apartments/delete/{id}', 'destroy')->name('apartments.destroy');
     Route::post('/apartment/{id}/approve', 'approve')->name('apartments.approve');
     Route::post('/apartment/{id}/reject', 'reject')->name('apartments.reject');
-})->middleware('auth:sanctum');
+});
 
 
 Route::controller(LocationController::class)->group(function () {
