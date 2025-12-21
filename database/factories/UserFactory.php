@@ -10,15 +10,16 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
+            'FirstName' => fake()->firstName(),
+            'LastName' => fake()->lastName(),
             'phone' => fake()->unique()->numerify('09########'),
             'password' => Hash::make('password'),
-            'role' => 'user',
-            'birth_date' => fake()->date(),
-            'personal_photo' => 'default_user.jpg',
-            'id_photo_front' => 'default_id.jpg',
-            'id_photo_back' => 'default_id.jpg',
+            
+            'BirthDate' => fake()->date(),
+            'PersonalPhoto' => 'default_user.jpg',
+            'idPhotoFront' => 'default_id.jpg',
+            'idPhotoBack' => 'default_id.jpg',
+            'account status' => 'Inactive',
         ];
     }
 }

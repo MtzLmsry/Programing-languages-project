@@ -16,12 +16,13 @@ return new class extends Migration
             $table->string('FirstName');
             $table->string('LastName');
             $table->string('phone')->unique();
-           // $table->string('email')->unique();
             $table->string('password');
             $table->date('BirthDate');
             $table->string('PersonalPhoto');
             $table->string('idPhotoFront');
             $table->string('idPhotoBack');
+            $table->enum('account status',['Active','Inactive'])->default('Inactive');
+            $table->text('rejection_reason')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

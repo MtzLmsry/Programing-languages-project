@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     $this->call([
         GovernorateSeeder::class,
         CitySeeder::class,
+        AdminSeeder::class,
     ]);
 
     User::factory(10)->create();

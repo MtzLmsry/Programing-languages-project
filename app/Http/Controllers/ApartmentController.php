@@ -35,9 +35,6 @@ class ApartmentController extends Controller
 
     public function store(StoreApartmentRequest $request)
 {
-   
-
-   
 
     $user_id = auth()->id(); 
     $apartment = Apartment::create([
@@ -93,47 +90,7 @@ class ApartmentController extends Controller
         ]);
     }
 
-    // PUT /apartments/{id}/approve
-    public function approve($id)
-    {
-        $apartment = Apartment::find($id);
-
-        if (!$apartment) {
-            return response()->json(['status' => 'error', 'message' => 'Not found'], 404);
-        }
-
-        $apartment->update([
-            'status' => 'approved',
-            'reject_reason' => null
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Apartment Approved'
-        ]);
-    }
-
-    // PUT /apartments/{id}/reject
-    public function reject(Request $request, $id)
-    {
-        $request->validate(['reject_reason' => 'required|string']);
-
-        $apartment = Apartment::find($id);
-
-        if (!$apartment) {
-            return response()->json(['status' => 'error', 'message' => 'Not found'], 404);
-        }
-
-        $apartment->update([
-            'status' => 'rejected',
-            'reject_reason' => $request->reject_reason
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Apartment rejected'
-        ]);
-    }
+   
 
     // PUT /apartments/{id}
     public function update(UpdateApartmentRequest $request, $id)

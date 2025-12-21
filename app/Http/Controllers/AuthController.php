@@ -20,20 +20,21 @@ class AuthController extends Controller
             'phone' => $request['phone'],
             'password' => bcrypt($request['password']),
             'birth_date' => $request['BirthDate'],
+            'account_status' => 'Inactive',
             'personal_photo' => $request->file('personalPhoto')->store('user/personal', 'public'),
             'id_photo_front' => $request->file('idPhotoFront')->store('users/id', 'public'),
             'id_photo_back' => $request->file('idPhotoBack')->store('users/id', 'public'),
         ]);
 
-        $token = $user->createToken('API_TOKEN')->plainTextToken;
+        
         
         return response()->json([
             'status' => 'success',
             'data' => [
-                'token' => $token,
+                
                 'user' => $user
             ],
-            'message' => 'User registered successfully'
+            'message' => 'User registered successfully, waiting for account activation'
         ]);
 
     }
@@ -48,6 +49,12 @@ class AuthController extends Controller
             ], 500);
         }
         $user = User::query()->where('phone', $request['phone'])->first();
+        if($user->account_status !== 'Active'){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Account is not active'
+            ], 403);
+        }
         $token = $user->createToken('API_TOKEN')->plainTextToken;
         
         return response()->json([
