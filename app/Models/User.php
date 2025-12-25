@@ -19,9 +19,16 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $guarded = [];
+
+
     public function apartments()
     {
         return $this->hasMany(Apartment::class, 'owner_id');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
     }
     
 

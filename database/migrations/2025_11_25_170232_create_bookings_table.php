@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreignId("apartment_id")->constrained("apartments");
             $table->date("start_date");
             $table->date("end_date");
-            $table->enum("status", ["still", "confirmed", "canceled"])->default("still");
-            $table->enum("payment_way", ["syriatelCash", "payramed", "ShamCash", "S.I.I.B", "BemoBank", "Alfouad"]);
+            $table->enum("status", ["still", "confirmed",'rejected', "canceled"])->default("still");
             $table->timestamps();
         });
     }

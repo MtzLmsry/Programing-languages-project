@@ -2,12 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\User;
 use App\Models\Apartment;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+
+    public function login(Request $request): JsonResponse {
+        
+        
+        $request->validate([
+            'userName' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+      $admin = Admin::where('username', $request->username)->first();
+
+    if (!$admin || !Hash::check($request->password, $admin->password)) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Invalid credentials'
+        ], 401);
+    }
+
+    $token = $admin->createToken('ADMIN_TOKEN')->plainTextToken;
+
+    return response()->json([
+        'status' => 'success',
+        'data' => [
+            'token' => $token,
+            'admin' => $admin
+        ],
+        'message' => 'Admin logged in successfully'
+    ]);
+    }
+
     /*
     |-----------------------------------
     | Users Section
@@ -17,7 +51,7 @@ class AdminController extends Controller
     // GET /admin/users/pending
     public function pendingUsers()
     {
-        $users = User::where('account_status', 'inactive')->get();
+        $users = User::where('account_status', 'Inactive')->get();
 
         return response()->json([
             'status' => 'success',
