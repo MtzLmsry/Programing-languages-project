@@ -8,7 +8,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingController;
-
+use App\Http\Controllers\ReviewController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -78,9 +78,19 @@ Route::controller(BookingController::class)
         Route::get('/bookings', 'index')->name('bookings.index');
         Route::post('/bookings/create', 'store')->name('bookings.store');
         Route::get('/bookings/my', 'showmyBooking')->name('bookings.showmyBooking');
-        Route::put('/bookings/update/{id}', 'update')->name('bookings.update');
-        Route::delete('/bookings/delete/{id}', 'cancel')->name('bookings.destroy');
+        Route::post('/bookings/update/{id}', 'update')->name('bookings.update');
+        Route::get('/bookings/owner', 'ownerBooking')->name('bookings.ownerBooking');
+        Route::post('/bookings/cancel/{id}', 'cancel')->name('bookings.destroy');
         //this is for the owner to approve or reject booking requests
         Route::post('/bookings/{id}/approve', 'approve')->name('bookings.approve');
         Route::post('/bookings/{id}/reject', 'reject')->name('bookings.reject');
 });
+
+
+//for the ReviewController
+Route::controller(ReviewController::class)
+    ->middleware(['auth:sanctum','active.account'])
+    ->group(function (){
+        Route::post('/reviews/create', 'store')->name('reviews.store');
+});
+Route::get('/apartments/{apartment_id}/reviews', [ReviewController::class, 'getApartmentReviews'])->name('reviews.apartmentReviews');

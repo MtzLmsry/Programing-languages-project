@@ -26,7 +26,7 @@ class storeBookingRequest extends FormRequest
             'apartment_id' => 'required|exists:apartments,id',
             'start_date' => 'required|date|before:end_date',
             'end_date' => 'required|date|after:start_date',
-            'status' => 'in:still,confirmed,rejected,canceled',
+            'status' => 'still',
         ];
     }
 }

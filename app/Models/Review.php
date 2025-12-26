@@ -9,7 +9,23 @@ class Review extends Model
     protected $fillable = [
         'user_id',
         'apartment_id',
+        'bppking_id',
         'rating',
         'comment'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function apartment()
+    {
+        return $this->belongsTo(Apartment::class);
+    }
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
 }

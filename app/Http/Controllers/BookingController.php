@@ -21,7 +21,10 @@ class BookingController extends Controller
      */
     public function store(storeBookingRequest $request): JsonResponse{
         $user_id = Auth::id();
-
+        $user = Auth::user();
+        if(!$user || $user->account_status !== 'Active'){
+            return response()->json(['message' => 'Unauthorized or inactive account'], 403);
+        }
         $existingBooking = Booking::where('apartment_id', $request->apartment_id)
             ->where(function ($query) use ($request) {
                 $query->whereBetween('start_date', [$request->start_date, $request->end_date])
@@ -31,11 +34,13 @@ class BookingController extends Controller
                                 ->where('end_date', '>=', $request->end_date);
                       });
             })
-            ->where('status', 'confirmed')
-            ->first();
+            ->where('status', ['still','confirmed'])
+            ->exists();
+
         if ($existingBooking) {
             return response()->json(['message' => 'The apartment is already booked for the selected dates'], 409);
         }
+
         $booking = Booking::create([
             'user_id' => $user_id,
             'apartment_id' => $request->apartment_id,
@@ -85,7 +90,7 @@ class BookingController extends Controller
         }
         $conflictingBooking = Booking::where('apartment_id', $request->apartment_id)
             ->where('id', '!=', $id)
-            ->where('status', 'confirmed')
+            ->where('status', ['confirmed','still'])
             ->where(function ($query) use ($request) {
                 $query->whereBetween('start_date', [$request->start_date, $request->end_date])
                       ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
@@ -104,7 +109,20 @@ class BookingController extends Controller
         ], 200);
     }
 
+    public function ownerBooking(): JsonResponse{
+        $ownerId = Auth::id();
+
+        $bookings = Booking::whereHas('apartment', function ($query) use ($ownerId) {
+            $query->where('owner_id', $ownerId);
+        })->get();
+        return response()->json([
+            'status' => 'success',
+            'bookings' => $bookings
+        ], 200);
+    }
+
    public function approve($id){
+    
     $booking = Booking::find($id);
     if (!$booking) {
         return response()->json([

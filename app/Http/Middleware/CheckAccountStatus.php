@@ -18,7 +18,7 @@ class CheckAccountStatus
             ], 401);
         }
 
-        if ($user->account_status !== 'active') {
+        if ($user->account_status !== 'Active') {
             return response()->json([
                 'message' => 'Your account is not active. Please wait for admin approval.'
             ], 403);

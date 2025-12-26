@@ -20,7 +20,7 @@ class AuthController extends Controller
             'phone' => $request['phone'],
             'password' => bcrypt($request['password']),
             'Birthdate' => $request['BirthDate'],
-            'account status' => 'Inactive',
+            'account_status' => 'Inactive',
             'personalPhoto' => $request->file('personalPhoto')->store('user/personal', 'public'),
             'idPhotoFront' => $request->file('idPhotoFront')->store('users/id', 'public'),
             'idPhotoBack' => $request->file('idPhotoBack')->store('users/id', 'public'),
