@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId("user_id")->constrained("users");
             $table->foreignId("apartment_id")->constrained("apartments");
+            $table->foreignId('booking_id')->constrained('bookings');
             $table->unique(["user_id", "apartment_id"]);
             $table->integer("rating");
             $table->text("comment");
-            $table->foreignId('booking_id')->constrained('bookings');
+            
             $table->timestamps();
         });
     }

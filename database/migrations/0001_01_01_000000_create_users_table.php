@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('idPhotoFront');
             $table->string('idPhotoBack');
             $table->enum('account_status',['Active','Inactive'])->default('Inactive');
+            $table->timestamp('bloocked_until')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->rememberToken();
             $table->timestamps();

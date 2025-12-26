@@ -9,7 +9,7 @@ use App\Models\Apartment;
 use App\Models\Apartment_photo;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\User;
 class ApartmentController extends Controller
 {
     // GET /apartments
@@ -37,6 +37,23 @@ class ApartmentController extends Controller
 {
 
     $user_id = auth()->id(); 
+
+    $apartmentCount = Apartment::where('owner_id', $user_id)
+    ->where('created_at', '>=', now()->subDay())
+    ->count();
+    if ($apartmentCount >= 5) {
+        $user = User::find($user_id);
+        $user->update([
+            'account_status' => 'Inactive',
+            'bloocked_until' => now()->addDay()
+        ]);
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'You have reached the limit of 5 apartment submissions in the last 24 hours.'
+        ], 429);
+    }
+
     $apartment = Apartment::create([
         'owner_id' => $user_id, 
         'city_id' => $request->city_id,

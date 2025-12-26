@@ -18,6 +18,19 @@ class CheckAccountStatus
             ], 401);
         }
 
+        if ($user->bloocked_until && now()->lessThan($user->bloocked_until)) {
+            return response()->json([
+                'message' => 'Your account is temporarily blocked until ' . $user->bloocked_until->toDateTimeString()
+            ], 403);
+        }
+
+        if ($user->bloocked_until && now()->greaterThanOrEqualTo($user->bloocked_until)) {
+            $user->update([
+                'account_status' => 'Active',
+                'bloocked_until' => null
+            ]);
+        }
+
         if ($user->account_status !== 'Active') {
             return response()->json([
                 'message' => 'Your account is not active. Please wait for admin approval.'

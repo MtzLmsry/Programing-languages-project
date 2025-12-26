@@ -25,6 +25,7 @@ class BookingController extends Controller
         if(!$user || $user->account_status !== 'Active'){
             return response()->json(['message' => 'Unauthorized or inactive account'], 403);
         }
+
         $existingBooking = Booking::where('apartment_id', $request->apartment_id)
             ->where(function ($query) use ($request) {
                 $query->whereBetween('start_date', [$request->start_date, $request->end_date])
@@ -39,6 +40,18 @@ class BookingController extends Controller
 
         if ($existingBooking) {
             return response()->json(['message' => 'The apartment is already booked for the selected dates'], 409);
+        }
+        $BookingCount = Booking::where('user_id', $user_id)
+            ->where('status', 'still')
+            ->count();
+        if ($BookingCount >= 3) {
+
+            $user->update([
+                'account_status' => 'Inactive',
+                'bloocked_until' => now()->addDay()
+            ]);
+
+            return response()->json(['message' => 'You have reached the maximum number of active bookings (3). Please complete or cancel existing bookings before creating new ones.'], 403);
         }
 
         $booking = Booking::create([
