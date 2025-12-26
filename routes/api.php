@@ -55,7 +55,7 @@ Route::controller(LocationController::class)
 
 Route::controller(AdminController::class)
     ->middleware('auth:sanctum')
-    ->prefix('admin')->group(function () {
+    ->group(function () {
     
         Route::get('/users/pending',  'pendingUsers');
         Route::post('/users/{id}/approve', 'approveUser');

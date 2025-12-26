@@ -19,7 +19,7 @@ class UserFactory extends Factory
             'PersonalPhoto' => 'default_user.jpg',
             'idPhotoFront' => 'default_id.jpg',
             'idPhotoBack' => 'default_id.jpg',
-            'account status' => 'Inactive',
+            'account_status' => 'Inactive',
         ];
     }
 }

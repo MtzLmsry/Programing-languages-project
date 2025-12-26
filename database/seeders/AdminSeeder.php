@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
             'phone' => '0959493837',
             'password' => Hash::make('Hh123456789'),
             'Birthdate' => '1990-01-01',
-            'account status' => 'Active',
+            'account_status' => 'Active',
             'personalPhoto' => 'path/to/personal/photo.jpg',
             'idPhotoFront' => 'path/to/id/front.jpg',
             'idPhotoBack' => 'path/to/id/back.jpg',

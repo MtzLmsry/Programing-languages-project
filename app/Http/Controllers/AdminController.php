@@ -9,12 +9,40 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginRequest;
 
 class AdminController extends Controller
 {
 
-   
+     public function login(LoginRequest $request): JsonResponse {
+        
+        
+         if (!Auth::attempt($request->only('phone', 'password'))) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid credentials'
+            ], 500);
+        }
+        $user = User::query()->where('phone', $request['phone'])->first();
 
+        if($user->account_status !== 'Active'){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Account is not active'
+            ], 403);
+        }
+        $token = $user->createToken('API_TOKEN')->plainTextToken;
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'token' => $token,
+                'user' => $user
+            ],
+            'message' => 'User logged in successfully'
+        ]);
+        
+    }
     /*
     |-----------------------------------
     | Users Section
@@ -42,7 +70,7 @@ class AdminController extends Controller
         }
 
         $user->update([
-            'account status' => 'Active'
+            'account_status' => 'Active'
         ]);
 
         return response()->json([
@@ -61,7 +89,7 @@ class AdminController extends Controller
         }
 
         $user->update([
-            'account status' => 'Inactive',
+            'account_status' => 'Inactive',
             'rejection_reason' => $request->rejection_reason,
         ]);
 

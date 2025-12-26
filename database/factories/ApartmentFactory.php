@@ -40,7 +40,7 @@ class ApartmentFactory extends Factory
             'is_cleaning_available' => $this->faker->boolean(),
             'is_electricity_available' => true,
             'is_furnished' => $this->faker->boolean(),
-            'status' => 'approved',
+            'status' => 'pending',
         ];
     }
 
