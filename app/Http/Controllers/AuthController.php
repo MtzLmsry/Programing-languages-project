@@ -15,15 +15,15 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse {
         
         $user = User::create([
-            'first_name' => $request['FirstName'],
-            'last_name' => $request['LastName'],
+            'FirstName' => $request['FirstName'],
+            'LastName' => $request['LastName'],
             'phone' => $request['phone'],
             'password' => bcrypt($request['password']),
-            'birth_date' => $request['BirthDate'],
-            'account_status' => 'Inactive',
-            'personal_photo' => $request->file('personalPhoto')->store('user/personal', 'public'),
-            'id_photo_front' => $request->file('idPhotoFront')->store('users/id', 'public'),
-            'id_photo_back' => $request->file('idPhotoBack')->store('users/id', 'public'),
+            'Birthdate' => $request['BirthDate'],
+            'account status' => 'Inactive',
+            'personalPhoto' => $request->file('personalPhoto')->store('user/personal', 'public'),
+            'idPhotoFront' => $request->file('idPhotoFront')->store('users/id', 'public'),
+            'idPhotoBack' => $request->file('idPhotoBack')->store('users/id', 'public'),
         ]);
 
         
