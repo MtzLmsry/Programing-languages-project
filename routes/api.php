@@ -26,6 +26,17 @@ Route::controller(AuthController::class)
         Route::post('/password/reset', 'resetPassword')->name('auth.resetPassword');
 });
 
+Route::get('/test-whatsapp', function () {
+    $result = sendWhatsAppMessage(
+        '+963958429644',
+        'اختبار OTP من Laravel ✅'
+    );
+
+    return response()->json([
+        'success' => $result
+    ]);
+});
+
 
 // Apartments api routes will be here
 

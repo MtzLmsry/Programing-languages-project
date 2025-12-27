@@ -8,11 +8,14 @@ class OtpCode extends Model
 {
     protected $fillable = [
         'user_id',
+        'phone',
         'code',
         'type',
         'expires_at',
+        'is_used',
     ];
     protected $dates = [
-        'expires_at',
+        'expires_at' => 'datetime',
+        'is_used' => 'boolean',
     ];
 }

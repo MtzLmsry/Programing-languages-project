@@ -26,7 +26,7 @@ class AuthController extends Controller
             'idPhotoBack' => $request->file('idPhotoBack')->store('users/id', 'public'),
         ]);
 
-        OtpService::generateAndSend($user, 'register');
+        OtpService::send($user->phone, 'register');
 
         
         return response()->json([
@@ -37,32 +37,19 @@ class AuthController extends Controller
     }
 
     public function verifyOtp(Request $request): JsonResponse {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'otp' => 'required|string',
-        ]);
+       $request->validate([
+        'phone' => 'required',
+        'code' => 'required'
+    ]);
 
-        $otp = OtpService::verify(
-            User::find($request->input('user_id')),
-            $request->input('otp'),
-            'register'
-        );
+    if (!OtpService::verify($request->phone, $request->code, 'register')) {
+        return response()->json(['message' => 'Invalid OTP'], 422);
+    }
 
-        if(!$otp){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid OTP'
-            ], 400);
-        } else {
-            $user = User::find($request->input('user_id'));
-            $otp->delete();
+    User::where('phone', $request->phone)
+        ->update(['account_status' => 'Active']);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'OTP verified successfully. Account is now active.',
-                'data' => $user
-            ]);
-        }
+    return response()->json(['message' => 'Account activated']);
     }
 
     public function login(LoginRequest $request): JsonResponse {
@@ -103,50 +90,28 @@ class AuthController extends Controller
     }
 
     public function forgotPassword(Request $request): JsonResponse {
-        $request->validate([
-            'phone' => 'required|exists:users,phone',
-        ]);
+            $request->validate(['phone' => 'required|exists:users,phone']);
 
-        $user = User::where('phone', $request->input('phone'))->first();
+    OtpService::send($request->phone, 'forgot_password');
 
-        OtpService::generateAndSend($user, 'forgot_password');
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'OTP sent to whatsapp. please verify to reset your password',
-            'user_id' => $user->id
-        ]);
+    return response()->json(['message' => 'OTP sent']);
     }
 
     public function resetPassword(Request $request): JsonResponse {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'otp' => 'required|string',
-            'new_password' => 'required|string|min:6|confirmed',
-        ]);
+        'phone' => 'required',
+        'code' => 'required',
+        'password' => 'required|min:6'
+    ]);
 
-        $otp = OtpService::verify(
-            User::find($request->input('user_id')),
-            $request->input('otp'),
-            'forgot_password'
-        );
+    if (!OtpService::verify($request->phone, $request->code, 'forgot_password')) {
+        return response()->json(['message' => 'Invalid OTP'], 422);
+    }
 
-        if(!$otp){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid OTP'
-            ], 400);
-        } else {
-            $user = User::find($request->input('user_id'));
-            $user->password = bcrypt($request->input('new_password'));
-            $user->save();
-            $otp->delete();
+    User::where('phone', $request->phone)
+        ->update(['password' => bcrypt($request->password)]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Password reset successfully.',
-            ]);
-        }
+    return response()->json(['message' => 'Password updated']);
     }
         
 }
