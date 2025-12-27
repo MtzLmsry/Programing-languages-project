@@ -1,42 +1,42 @@
 <?php
-// app/Services/OtpService.php
 namespace App\Services;
-
 use App\Models\OtpCode;
+use App\Models\User;
+
 class OtpService
 {
-    public static function send(string $phone, string $type): void
+    public static function send(User $user, string $type): void
     {
         $code = rand(100000, 999999);
 
-        OtpCode::where('phone', $phone)
+        OtpCode::where('user_id', $user->id)
             ->where('type', $type)
             ->where('used', false)
             ->update(['used' => true]);
 
         OtpCode::create([
-            'phone' => $phone,
+            'user_id' => $user->id,
             'code' => $code,
             'type' => $type,
             'expires_at' => now()->addMinutes(5),
         ]);
 
         sendWhatsAppMessage(
-            $phone,
-            "رمز التحقق الخاص بك هو: $code"
+            $user->phone,
+            "your verify code is: $code"
         );
     }
 
-    public static function verify(string $phone, string $code, string $type): bool
+    public static function verify(User $user, string $code, string $type): bool
     {
         $otp = OtpCode::where([
-            'phone' => $phone,
-            'code' => $code,
-            'type' => $type,
-            'used' => false,
-        ])
-        ->where('expires_at', '>', now())
-        ->first();
+                'user_id' => $user->id,
+                'code' => $code,
+                'type' => $type,
+                'used' => false,
+            ])
+            ->where('expires_at', '>', now())
+            ->first();
 
         if (!$otp) return false;
 

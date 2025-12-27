@@ -29,7 +29,7 @@ Route::controller(AuthController::class)
 Route::get('/test-whatsapp', function () {
     $result = sendWhatsAppMessage(
         '+963958429644',
-        'اختبار OTP من Laravel ✅'
+        'اختبار OTP من Laravel '
     );
 
     return response()->json([
