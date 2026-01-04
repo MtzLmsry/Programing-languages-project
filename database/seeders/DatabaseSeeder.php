@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         GovernorateSeeder::class,
         CitySeeder::class,
         AdminSeeder::class,
+        realApartmentSeeder::class,
     ]);
 
     User::factory(10)->create();

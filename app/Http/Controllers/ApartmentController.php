@@ -54,6 +54,13 @@ class ApartmentController extends Controller
         ], 429);
     }
 
+    if ($user_id->bloocked_until > now()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Your account is temporarily blocked from submitting new apartments. Please try again later.'
+        ], 403);
+    }
+
     $apartment = Apartment::create([
         'owner_id' => $user_id, 
         'city_id' => $request->city_id,

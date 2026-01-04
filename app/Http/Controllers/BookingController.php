@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\storeBookingRequest;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 class BookingController extends Controller
 {
@@ -19,7 +20,9 @@ class BookingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(storeBookingRequest $request): JsonResponse{
+    public function store(storeBookingRequest $request): JsonResponse
+    {
+
         $user_id = Auth::id();
         $user = Auth::user();
         if(!$user || $user->account_status !== 'Active'){
@@ -53,6 +56,13 @@ class BookingController extends Controller
 
             return response()->json(['message' => 'You have reached the maximum number of active bookings (3). Please complete or cancel existing bookings before creating new ones.'], 403);
         }
+
+        if ($user->bloocked_until > now()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Your account is temporarily blocked from submitting new apartments. Please try again later.'
+        ], 403);
+    }
 
         $booking = Booking::create([
             'user_id' => $user_id,
@@ -142,6 +152,7 @@ class BookingController extends Controller
             'message' => 'Booking not found'
         ], 404);
     }
+    $this->authorize('approve', $booking);
     $booking->status = 'confirmed';
     $booking->save();
     return response()->json([
@@ -157,6 +168,8 @@ class BookingController extends Controller
             'message' => 'Booking not found'
         ], 404);
     }
+
+    $this->authorize('reject', $booking);
     $booking->status = 'rejected';
     $booking->save();
     return response()->json([
@@ -183,6 +196,7 @@ class BookingController extends Controller
             'message' => 'Booking is already canceled or rejected'
         ], 400);
     }
+    $this->authorize('cancel', $booking);
     $booking->update([
         'status' => 'canceled'
     ]);

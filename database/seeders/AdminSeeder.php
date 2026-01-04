@@ -17,7 +17,7 @@ class AdminSeeder extends Seeder
        User::create([
             'FirstName' => 'Admin',
             'LastName' => 'User',
-            'phone' => '0959493837',
+            'phone' => '+963959493837',
             'password' => Hash::make('Hh123456789'),
             'Birthdate' => '1990-01-01',
             'account_status' => 'Active',

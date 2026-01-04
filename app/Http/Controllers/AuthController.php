@@ -13,7 +13,6 @@ class AuthController extends Controller
 {
       public function register(RegisterRequest $request): JsonResponse
     {
-        // إذا الرقم موجود بحالة Inactive، استخدم الحساب بدل إنشاء جديد
         $user = User::firstOrCreate(
             ['phone' => $request->phone],
             [

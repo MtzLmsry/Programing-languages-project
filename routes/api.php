@@ -20,7 +20,7 @@ Route::controller(AuthController::class)
     ->group(function () {
         Route::post('/register', 'register')->name('auth.register');
         Route::post('/verify-otp', 'verifyOtp')->name('auth.verifyOtp');
-        Route::post('/login', 'login')->name('auth.login');
+        Route::post('/login', 'login')->name('auth.login')->middleware('throttle:5,1');
         Route::post('/logout', 'logout')->middleware('auth:sanctum')->name('auth.logout');
         Route::post('/password/forgot', 'forgotPassword')->name('auth.forgotPassword');
         Route::post('/password/reset', 'resetPassword')->name('auth.resetPassword');
@@ -45,7 +45,7 @@ Route::controller(ApartmentController::class)
     ->group(function (){
     
         Route::get('/apartments/search', 'search')->name('apartments.search');
-        Route::post('/apartments/create', 'store')->name('apartments.store');
+        Route::post('/apartments/create', 'store')->name('apartments.store')->middleware('throttle:1,5');
         Route::put('/apartments/update/{id}', 'update')->name('apartments.update');
         Route::delete('/apartments/delete/{id}', 'destroy')->name('apartments.destroy');
 });
@@ -57,6 +57,7 @@ Route::controller(ApartmentController::class)
         Route::get('/apartments/show/{id}', 'show')->name('apartments.show');
 });
 
+//for frontend location data
 Route::controller(LocationController::class)
     ->group(function () {
 
