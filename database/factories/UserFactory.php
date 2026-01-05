@@ -12,9 +12,8 @@ class UserFactory extends Factory
         return [
             'FirstName' => fake()->firstName(),
             'LastName' => fake()->lastName(),
-            'phone' => fake()->unique()->numerify('09########'),
+            'phone' => fake()->unique()->numerify('+9639########'),
             'password' => Hash::make('password'),
-            
             'BirthDate' => fake()->date(),
             'PersonalPhoto' => 'default_user.jpg',
             'idPhotoFront' => 'default_id.jpg',

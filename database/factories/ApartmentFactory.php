@@ -14,7 +14,10 @@ class ApartmentFactory extends Factory
 
     public function definition(): array
     {
+       
         $type = $this->faker->randomElement(['one_room', 'multipul_rooms']);
+        
+        $status = $this->faker->randomElement(['Pending', 'Approved', 'Rejected']);
 
         if ($type === 'one_room') {
             $rooms = 1;
@@ -23,6 +26,7 @@ class ApartmentFactory extends Factory
             $rooms = $this->faker->numberBetween(2, 5);
             $area  = $this->faker->numberBetween(90, 200);
         }
+       
 
         return [
             'owner_id' => User::inRandomOrder()->first()->id,
@@ -40,7 +44,8 @@ class ApartmentFactory extends Factory
             'is_cleaning_available' => $this->faker->boolean(),
             'is_electricity_available' => true,
             'is_furnished' => $this->faker->boolean(),
-            'status' => 'pending',
+            'status' => $status,
+            'reject_reason' => $status === 'Rejected' ? $this->faker->sentence() : null,
         ];
     }
 

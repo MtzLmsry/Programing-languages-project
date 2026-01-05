@@ -17,10 +17,6 @@ class realApartmentSeeder extends Seeder
     {
         $owner = User::first();
 
-        /* ======================
-           Apartments
-        ====================== */
-
         $apartments = [
             [
                 
@@ -55,8 +51,7 @@ class realApartmentSeeder extends Seeder
                 'rooms' => 5,
                 'floor_number' => 2,
                 'apartment_type' => 'multipul_rooms',
-                'description' => 'شقة مريحة للعائلات تقع في منطقة كفرس
-وسة، تحتوي على غرف واسعة ومطبخ مجهز بالكامل.',
+                'description' => 'شقة مريحة للعائلات تقع في منطقة كفرسوسة، تحتوي على غرف واسعة ومطبخ مجهز بالكامل.',
                 'is_internet_available' => true,
                 'is_air_conditioned' => true,
                 'is_cleaning_available' => false,
@@ -74,18 +69,18 @@ class realApartmentSeeder extends Seeder
             [
                 'city_id' => 1,
                 'governorate_id' => 1,
-                'title' => 'شقة اقتصادية في جرمانا',
+                'title' => 'شقة اقتصادية في ركن الدين',
                 'price' => 300,
                 'rooms' => 6,
                 'floor_number' => 1,
                 'apartment_type' => 'multipul_rooms',
-                'description' => 'شقة اقتصادية تقع في منطقة جرمانا، مناسبة للطلاب أو أفراد يبحثون عن سكن مريح بأسعار معقولة.',
+                'description' => 'شقة اقتصادية تقع في منطقة ركن الدين، مناسبة للطلاب أو العائلات الصغيرة، تحتوي على غرف متعددة ومساحات معيشة بسيطة.',
                 'is_internet_available' => false,
                 'is_air_conditioned' => false,
                 'is_cleaning_available' => false,
                 'is_electricity_available' => true,
                 'is_furnished' => false,
-                'area'  => 90,
+                'area'  => 120,
                 'images' => [
                     'apartments/apt3_1.jpg',
                     'apartments/apt3_2.jpg',
@@ -116,6 +111,7 @@ class realApartmentSeeder extends Seeder
                 'rooms'    => $data['rooms'],
                 'area'     => $data['area'],
                 'status'   => 'approved',
+                'reject_reason' => null,
             ]);
 
             foreach ($data['images'] as $image) {
@@ -126,15 +122,10 @@ class realApartmentSeeder extends Seeder
             }
         }
 
-        /* ======================
-           Room
-        ====================== */
-
         $room = Apartment::create([
             'owner_id' => $owner->id,
             'city_id' => 1,
             'governorate_id' => 1,
-
             'title'    => 'غرفة طلابية مفروشة',
             'price'    => 150,
             'rooms' => 1,
@@ -146,8 +137,9 @@ class realApartmentSeeder extends Seeder
             'is_cleaning_available' => false,
             'is_electricity_available' => true,
             'is_furnished' => true,
-            'area'     => 30,
+            'area'     => 100,
             'status'   => 'approved',
+            'reject_reason' => null,
         ]);
 
         $roomImages = [

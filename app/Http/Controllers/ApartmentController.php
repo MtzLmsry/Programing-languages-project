@@ -13,9 +13,9 @@ use App\Models\User;
 class ApartmentController extends Controller
 {
     // GET /apartments
-    public function index(Request $request)
+    public function indexApprovedApartment(Request $request)
     {
-        return Apartment::all();
+        return Apartment::all()->where('status', 'approved');
        
     }
     //filtering

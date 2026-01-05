@@ -53,7 +53,7 @@ Route::controller(ApartmentController::class)
 Route::controller(ApartmentController::class)
     ->group(function () {
 
-        Route::get('/apartments', 'index')->name('apartments.index');
+        Route::get('/apartments', 'indexApprovedApartment')->name('apartments.index');
         Route::get('/apartments/show/{id}', 'show')->name('apartments.show');
 });
 
