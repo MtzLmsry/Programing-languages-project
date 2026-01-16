@@ -45,7 +45,7 @@ Route::controller(ApartmentController::class)
     ->group(function (){
     
         Route::get('/apartments/search', 'search')->name('apartments.search');
-        Route::post('/apartments/create', 'store')->name('apartments.store')->middleware('throttle:1,5');
+        Route::post('/apartments/create', 'store')->name('apartments.store')->middleware('throttle:1,5')->middleware('temporary.block');
         Route::put('/apartments/update/{id}', 'update')->name('apartments.update');
         Route::delete('/apartments/delete/{id}', 'destroy')->name('apartments.destroy');
 });
